@@ -1,43 +1,67 @@
 package client;
 
-import scan.Scan;
+
+
+import myLibrary.console.Console;
+import myLibrary.input.Scan;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 public class PrinterScanner {
-    private Double x;
-    private Double y;
-    private Double z;
-    private Map<String, Double> xReq = Stream.of(
-                    new AbstractMap.SimpleEntry<>("x", x=0d),
-                    new AbstractMap.SimpleEntry<>("y", y=0d),
-                    new AbstractMap.SimpleEntry<>("z", z=0d))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    private Integer matrixSize;
+   // private Integer matrix[][];
+    private String req;
+    private void setVarRandom() {
+        Random random = new Random();
+        IntStream.range(0, matrixSize)
+                .forEach(row -> IntStream.range(0, matrixSize)
+                        .forEach(column ->getVar(random.nextInt(18))));
 
-    private void setVar(String var) {
-        System.out.println("Введите значение " + var);
-        xReq.put(var, Scan.doubleScan());
+    }
+    private void setVar(){
+        IntStream.range(0, matrixSize)
+                .forEach(row -> IntStream.range(0, matrixSize)
+                        .forEach(column ->
+                               getVar(Var(row, column))));
+    }
+    private int Var(int row, int column){
+        Console.log("Введите значение [" + row+ "]["+column+"]");
+        return Scan.intScan();
     }
     private void set(){
-        xReq.forEach((k, v) -> setVar(k));
-    }
-    private String checkNull(String var){
-        try {
-            return xReq.get(var).toString();
-        }catch (Exception e){
-            return "0";
+        Console.log("Добрейшего времени суток! Ведите размерность квадратной матрицы");
+        matrixSize = Math.abs(Scan.intScan());
+        req = matrixSize+" ";
+        Console.log("Будем мучатся с ручным заполнением, или заполнить случайными числами?\n1.Заполни на рандом\n2.Хочу мучатся!");
+        if(!Scan.booleanScan()){
+            setVarRandom();
+        }else{
+            setVar();
         }
+
     }
-    @Override
+    private void getVar(int val){
+        req+= val + " ";
+    }
+   /* @Override
     public String toString(){
         set();
-        System.out.println(xReq.toString());
+        //System.out.println(xReq.toString());
         String req;
-        req =    checkNull("x") +" "
-                +checkNull("y")+" "
-                +checkNull("z");
+        IntStream.range(0, matrixSize)
+                .forEach(row -> IntStream.range(0, matrixSize)
+                        .forEach(column -> getVar(row,column)));
+        return req;
+    }*/
+    public String getMatrix(){
+        set();
+        String str[] =req.split(" ");
+        for(int i =1; i< str.length; i++){
+            System.out.print(str[i]+" ");
+            if(i%matrixSize==0) Console.log("");
+        }
+
         return req;
     }
 }
